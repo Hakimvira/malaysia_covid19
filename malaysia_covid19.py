@@ -119,7 +119,7 @@ class case_distribution():
 		m.drawmapboundary(fill_color='white')
 		m.fillcontinents(color='gray',lake_color='aqua')
 
-		m.readshapefile('/home/hakimvira/Documents/python/my/MYS_adm1', 'my', drawbounds = True, linewidth=0.5)
+		m.readshapefile('/my_shapefile/MYS_adm1', 'my', drawbounds = True, linewidth=0.5)
 
 		df_poly = pd.DataFrame({
 		        'shapes': [Polygon(np.array(shape), True) for shape in m.my],
