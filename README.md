@@ -3,7 +3,7 @@ Laporan Statistik kes Covid-19 di Malaysia
 Graf yang disediakan:
 1. Graf jumlah keseluruhan kes(Graf dan Plot Bar)
 2. Graf tiga negeri paling terjejas
-3. Graf bagi setiap negeri(keseluhuran dan harian)
+3. Graf bagi setiap negeri(keseluruhan dan harian)
 4. Peta Haba
 
 Keperluan(versi terkini):
