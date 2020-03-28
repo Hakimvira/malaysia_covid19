@@ -84,7 +84,7 @@ class case_distribution():
 		url1 = 'https://raw.githubusercontent.com/Hakimvira/malaysia_covid19/master/my2.geojson'
 		url2 = 'https://raw.githubusercontent.com/Hakimvira/malaysia_covid19/master/kes_harian.csv'
 
-		with request.urlopen('url') as response:
+		with request.urlopen(url1) as response:
         		source = response.read()
         		self.my = json.loads(source)	
 
