@@ -13,6 +13,7 @@ Keperluan(versi terkini):
 - Pandas
 - Json
 - Plotly
+- Urrlib
 
 Sumber data:
 
