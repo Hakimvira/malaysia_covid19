@@ -84,9 +84,9 @@ class case_distribution():
 		url1 = 'https://raw.githubusercontent.com/Hakimvira/malaysia_covid19/master/my2.geojson'
 		url2 = 'https://raw.githubusercontent.com/Hakimvira/malaysia_covid19/master/kes_harian.csv'
 
-		with open (url1) as file:
-   				my = json.load(file)
-   				self.my = my	
+		with request.urlopen('url') as response:
+        		source = response.read()
+        		self.my = json.loads(source)	
 
 		data = pd.read_csv(url2, index_col = 'Date', parse_dates = True)
 		date = pd.read_csv(url2)
