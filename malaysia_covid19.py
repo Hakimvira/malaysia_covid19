@@ -131,7 +131,7 @@ class case_distribution():
 				plt.style.use('seaborn')
 				fig, ax = plt.subplots()
 				ax.plot(self.data_1.index, self.data_0[state], color = 'orange', label = 'daily')
-				ax.plot(self.data_1.index, data, color = 'red', label = 'cumulative')
+				ax.plot(self.data_1.index, data, color = 'red', label = 'total')
 				fig.autofmt_xdate()
 				ax.legend()
 				plt.show()
