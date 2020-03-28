@@ -80,14 +80,15 @@ class case_distribution():
 		self.my = [0]
 
 	def import_file(self):
-		url = 'https://raw.githubusercontent.com/Hakimvira/malaysia_covid19/master/kes_harian.csv?token=AO62XWVCY2REWUCUBQA6RVC6PYXLS'
+		url1 = 'https://raw.githubusercontent.com/Hakimvira/malaysia_covid19/master/my2.geojson'
+		url2 = 'https://raw.githubusercontent.com/Hakimvira/malaysia_covid19/master/kes_harian.csv'
 
-		with open ('my2.geojson') as file:
+		with open (url1) as file:
    				my = json.load(file)
    				self.my = my	
 
-		data = pd.read_csv('kescov2.csv', index_col = 'Date', parse_dates = True)
-		date = pd.read_csv('kescov2.csv')
+		data = pd.read_csv(url2, index_col = 'Date', parse_dates = True)
+		date = pd.read_csv(url2)
 		date = np.array(date['Date'].values)
 
 		data2 = data.cumsum()
@@ -126,6 +127,7 @@ class case_distribution():
 				data = self.data_2[self.data_2['state'] == state]
 				data = data.ffill(axis = 1)
 				data = data.iloc[0,1:].values
+				
 				plt.style.use('seaborn')
 				fig, ax = plt.subplots()
 				ax.plot(self.data_1.index, self.data_0[state], color = 'orange', label = 'daily')
