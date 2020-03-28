@@ -1,17 +1,8 @@
-import os
-import conda
-conda_file_dir = conda.__file__
-conda_dir = conda_file_dir.split('lib')[0]
-proj_lib = os.path.join(os.path.join(conda_dir, 'share'), 'proj')
-os.environ["PROJ_LIB"] = proj_lib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from mpl_toolkits.basemap import Basemap
-from matplotlib.patches import Polygon
-from matplotlib.collections import PatchCollection
-from matplotlib.colors import Normalize
-import matplotlib
+import json
+import plotly.express as px
 
 class time_series:
 	def __init__ (self):
@@ -83,20 +74,37 @@ class time_series:
 
 class case_distribution():
 	def __init__ (self):
+		self.data_0 = [0]
 		self.data_1 = [0]
 		self.data_2 = [0]
+		self.my = [0]
 
 	def import_file(self):
+		url = 'https://raw.githubusercontent.com/Hakimvira/malaysia_covid19/master/kes_harian.csv?token=AO62XWVCY2REWUCUBQA6RVC6PYXLS'
+
+		with open ('my2.geojson') as file:
+   				my = json.load(file)
+   				self.my = my	
+
 		data = pd.read_csv('kescov2.csv', index_col = 'Date', parse_dates = True)
+		date = pd.read_csv('kescov2.csv')
+		date = np.array(date['Date'].values)
+
 		data2 = data.cumsum()
 
 		data1 = data2.sort_values(by = data.index[-1], axis = 1, ascending = False)
+		self.data_0 = data.ffill()
 		self.data_1 = data1.ffill()
 
 		data2 = data2.reset_index()
 		data2 = data2.drop('Date', axis = 1)
 		data2 = data2.T
 		data2.index.name = 'state'
+		data2 = data2.reset_index()
+
+		for n,d in zip(np.array(data2.columns.values[1:]),date):
+	    		data2 = data2.rename(columns = { n : d })
+
 		self.data_2 = data2
 
 	def worst_3(self):
@@ -112,33 +120,32 @@ class case_distribution():
 
 		plt.show()
 
-	def case_map(self):
-		fig, ax = plt.subplots(figsize=(200,20))
-		m = Basemap(width=8E6, height=8E6,lat_0 = -5, lon_0 = 110, llcrnrlon=99, llcrnrlat=-2,
-    		urcrnrlon=119.8, urcrnrlat=9, resolution = 'l')
-		m.drawmapboundary(fill_color='white')
-		m.fillcontinents(color='gray',lake_color='aqua')
-
-		m.readshapefile('/my_shapefile/MYS_adm1', 'my', drawbounds = True, linewidth=0.5)
-
-		df_poly = pd.DataFrame({
-		        'shapes': [Polygon(np.array(shape), True) for shape in m.my],
-		        'area': [area['NAME_1'] for area in m.my_info] })
-
-		df_poly = df_poly.merge(self.data_2, left_on='area', right_on = 'state', how='left')
+	def state(self,state):
+		for n in self.data_2['state'].values:
+			if str(state) == n:
+				data = self.data_2[self.data_2['state'] == state]
+				data = data.ffill(axis = 1)
+				data = data.iloc[0,1:].values
+				plt.style.use('seaborn')
+				fig, ax = plt.subplots()
+				ax.plot(self.data_1.index, self.data_0[state], color = 'orange', label = 'daily')
+				ax.plot(self.data_1.index, data, color = 'red', label = 'cumulative')
+				fig.autofmt_xdate()
+				ax.legend()
+				plt.show()
 			
-		cmap = plt.get_cmap('Reds')   
-		pc = PatchCollection(df_poly.shapes, zorder=2)
-		norm = Normalize()
-		pc.set_facecolor(cmap(norm(df_poly.iloc[:,-1].fillna(0).values)))
-		ax.add_collection(pc)
+			else:
+				continue
+	
+	def case_map(self):
+		fig = px.choropleth(self.data_2, geojson=self.my, locations= 'state', featureidkey='properties.name', color= self.data_2.iloc[:,-1].name,
+                           color_continuous_scale="Reds",
+                           scope = 'asia', labels = {'self.data_2.iloc[:,-1].name' : 'Cases'})
 
-		mapper = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap)
-		 
-		mapper.set_array(df_poly.iloc[:,-1])
-		plt.colorbar(mapper, shrink=0.4)
+		fig.update_geos(fitbounds="locations", visible=False)
+		fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 
-		plt.show()
+		fig.show()
 
 j = time_series()
 j.import_file()
@@ -148,4 +155,5 @@ j.plot_bar()
 k = case_distribution()
 k.import_file()
 k.worst_3()
+k.state('Melaka')
 k.case_map()
